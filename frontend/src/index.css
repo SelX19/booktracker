@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background-color: #FAF7F2;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+  }
+}
+
+@layer components {
+  .book-card {
+    @apply card bg-base-100 shadow-md border border-base-300 hover:shadow-lg transition-all duration-300;
+  }
+
+  .status-badge-want {
+    @apply badge badge-outline border-accent text-accent;
+  }
+
+  .status-badge-reading {
+    @apply badge badge-secondary text-secondary-content;
+  }
+
+  .status-badge-finished {
+    @apply badge badge-primary text-primary-content;
+  }
+
+  .star-filled {
+    @apply text-accent;
+  }
+
+  .star-empty {
+    @apply text-base-300;
+  }
+}
