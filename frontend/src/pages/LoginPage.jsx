@@ -90,7 +90,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="divider font-body text-sm">Don't have an account?</div>
+            <div className="divider font-body text-sm">Don&apos;t have an account?</div>
             <Link to="/register" className="btn btn-outline btn-secondary w-full font-body">
               Create Account
             </Link>

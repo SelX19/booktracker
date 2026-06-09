@@ -50,7 +50,7 @@ export default function DashboardPage() {
         <h1 className="font-display text-3xl font-bold text-base-content">
           Welcome back, <span className="text-primary">{user?.username}</span> 👋
         </h1>
-        <p className="font-body text-base-content/60 mt-1">Here's your reading overview</p>
+        <p className="font-body text-base-content/60 mt-1">Here&apos;s your reading overview</p>
       </div>
 
       {/* Stats grid */}

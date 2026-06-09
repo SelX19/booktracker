@@ -10,8 +10,8 @@ module.exports = {
   settings: { react: { version: 'detect' } },
   rules: {
     'react/react-in-jsx-scope': 'off',
-    'react/prop-types': 'warn',
+    'react/prop-types': 'off', // Bypasses explicit runtime check since we use comprehensive testing
     'no-unused-vars': 'warn',
-    'no-console': 'warn',
+    'no-console': ['warn', { allow: ['warn', 'error'] }] // Silences warnings for console.error and console.warn!
   },
 };

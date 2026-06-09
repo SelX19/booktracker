@@ -52,7 +52,7 @@ export default function BookCard({ book, onEdit, onDelete }) {
 
         {book.notes && (
           <p className="text-sm text-base-content/60 font-body mt-2 line-clamp-2 italic">
-            "{book.notes}"
+            &ldquo;{book.notes}&rdquo;
           </p>
         )}
 
