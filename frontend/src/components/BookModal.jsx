@@ -40,7 +40,7 @@ export default function BookModal({ isOpen, onClose, onSubmit, editBook = null }
 
     if (!form.title.trim()) return setError('Title is required');
     if (!form.author.trim()) return setError('Author is required');
-    if (form.rating && (form.rating < 1 || form.rating > 5)) return setError('Rating must be 1–5');
+    if (form.rating !== '' && (Number(form.rating) < 1 || Number(form.rating) > 5)) return setError('Rating must be 1-5');
 
     setLoading(true);
     try {
@@ -140,8 +140,6 @@ export default function BookModal({ isOpen, onClose, onSubmit, editBook = null }
               id="rating"
               name="rating"
               type="number"
-              min="1"
-              max="5"
               value={form.rating}
               onChange={handleChange}
               placeholder="Leave blank if unrated"
