@@ -8,9 +8,11 @@ export default defineConfig({
   workers: 1,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: 'https://booktracker-frontend-13zm.onrender.com',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    actionTimeout: 15000,
+    navigationTimeout: 30000,
   },
   projects: [
     {
@@ -18,10 +20,4 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: 'npm run dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
-    timeout: 30000,
-  },
 });
