@@ -15,6 +15,13 @@ const renderModal = (props = {}) =>
         />
     );
 
+const fillAndSubmitModal = (title, author, rating = null) => {
+    if (title) fireEvent.change(screen.getByLabelText(/title/i), { target: { value: title } });
+    if (author) fireEvent.change(screen.getByLabelText(/author/i), { target: { value: author } });
+    if (rating !== null) fireEvent.change(screen.getByLabelText(/rating/i), { target: { value: rating } });
+    fireEvent.click(screen.getByRole('button', { name: /add book/i }));
+};
+
 describe('BookModal Component Unit Tests', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -116,25 +123,19 @@ describe('BookModal Component Unit Tests', () => {
 
         it('should reject a rating value above 5 (Above Boundary)', async () => {
             renderModal();
-            fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Title' } });
-            fireEvent.change(screen.getByLabelText(/author/i), { target: { value: 'Author' } });
-            fireEvent.change(screen.getByLabelText(/rating/i), { target: { value: '6' } });
-            fireEvent.click(screen.getByRole('button', { name: /add book/i }));
+            fillAndSubmitModal('Title', 'Author', '6');
             expect(await screen.findByRole('alert')).toHaveTextContent('Rating must be 1-5');
         });
 
         it('should reject a rating value below 1 (Below Boundary)', async () => {
             renderModal();
-            fireEvent.change(screen.getByLabelText(/title/i), { target: { value: 'Title' } });
-            fireEvent.change(screen.getByLabelText(/author/i), { target: { value: 'Author' } });
-            fireEvent.change(screen.getByLabelText(/rating/i), { target: { value: '0' } });
-            fireEvent.click(screen.getByRole('button', { name: /add book/i }));
+            fillAndSubmitModal('Title', 'Author', '0');
             expect(await screen.findByRole('alert')).toHaveTextContent('Rating must be 1-5');
         });
 
         it('should not call onSubmit if validation fails', async () => {
             renderModal();
-            fireEvent.click(screen.getByRole('button', { name: /add book/i }));
+            fillAndSubmitModal('', '');
             await screen.findByRole('alert');
             expect(mockOnSubmit).not.toHaveBeenCalled();
         });

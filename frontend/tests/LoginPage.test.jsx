@@ -30,6 +30,12 @@ const renderLoginPage = () =>
         </MemoryRouter>
     );
 
+const fillLoginForm = (email, password) => {
+    fireEvent.change(screen.getByLabelText('Email Address'), { target: { value: email } });
+    fireEvent.change(screen.getByLabelText('Password'), { target: { value: password } });
+    fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+};
+
 describe('LoginPage Component Unit Tests', () => {
     beforeEach(() => {
         vi.clearAllMocks();
@@ -89,33 +95,18 @@ describe('LoginPage Component Unit Tests', () => {
     describe('Successful Login Flow', () => {
         it('should call the login API with correct credentials on valid submission', async () => {
             loginApi.mockResolvedValueOnce({ data: { token: 'mock-token', user: { username: 'selma' } } });
-
             renderLoginPage();
-            fireEvent.change(screen.getByLabelText('Email Address'), {
-                target: { value: 'selma@burch.edu' },
-            });
-            fireEvent.change(screen.getByLabelText('Password'), {
-                target: { value: 'secure123' },
-            });
-            fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
+            fillLoginForm('selma@burch.edu', 'secure123');
             await waitFor(() => {
                 expect(loginApi).toHaveBeenCalledWith({ email: 'selma@burch.edu', password: 'secure123' });
             });
         });
 
+
         it('should call auth context login() and redirect to /dashboard on success', async () => {
             loginApi.mockResolvedValueOnce({ data: { token: 'mock-token', user: { username: 'selma' } } });
-
             renderLoginPage();
-            fireEvent.change(screen.getByLabelText('Email Address'), {
-                target: { value: 'selma@burch.edu' },
-            });
-            fireEvent.change(screen.getByLabelText('Password'), {
-                target: { value: 'secure123' },
-            });
-            fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
-
+            fillLoginForm('selma@burch.edu', 'secure123');
             await waitFor(() => {
                 expect(mockLogin).toHaveBeenCalledWith('mock-token', { username: 'selma' });
                 expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
