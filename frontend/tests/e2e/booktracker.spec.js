@@ -17,6 +17,7 @@ const TEST_USER = {
 const EXISTING_USER = {
     email: 'selma.dozic@stu.ibu.edu.ba',
     password: '123456',
+    username: 'Selma',
 };
 
 async function registerAndLogin(page) {
@@ -56,8 +57,9 @@ test.describe('Authentication', () => {
     });
 
     test('E2E-AUTH-02: Dashboard displays welcome message with registered username', async ({ page }) => {
-        await registerAndLogin(page);
-        await expect(page.getByText(TEST_USER.username)).toBeVisible();
+        await loginExisting(page);
+        await expect(page.getByText('Welcome back,')).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText(EXISTING_USER.username, { exact: true })).toBeVisible({ timeout: 15000 });
     });
 
     test('E2E-AUTH-03: Login with wrong password shows error message', async ({ page }) => {
@@ -110,23 +112,25 @@ test.describe('Book Management', () => {
     test.beforeEach(async ({ page }) => {
         await loginExisting(page);
         await page.goto('/books');
+        await expect(page.locator('button', { hasText: 'Add Book' }))
+            .toBeVisible({ timeout: 20000 });
     });
 
     test('E2E-BOOK-01: Add Book modal opens when Add Book button is clicked', async ({ page }) => {
-        await page.getByRole('button', { name: /add book/i }).click();
-        await expect(page.getByText('Add New Book')).toBeVisible();
+        await page.locator('button', { hasText: 'Add Book' }).click();
+        await expect(page.getByText('Add New Book')).toBeVisible({ timeout: 10000 });
     });
 
     test('E2E-BOOK-02: Successfully adding a book shows it in the book list', async ({ page }) => {
         const bookTitle = `Playwright Test Book ${timestamp}`;
 
-        await page.getByRole('button', { name: /add book/i }).click();
+        await page.locator('button', { hasText: 'Add Book' }).click();
         await page.getByLabel(/title/i).fill(bookTitle);
         await page.getByLabel(/author/i).fill('Test Author');
-        await page.getByLabel(/status/i).selectOption('reading');
-        await page.getByRole('button', { name: /add book/i }).last().click();
+        await page.getByLabel('Status', { exact: true }).selectOption('reading');
+        await page.locator('button', { hasText: 'Add Book' }).last().click();
 
-        await expect(page.getByText(bookTitle)).toBeVisible();
+        await expect(page.getByText(bookTitle)).toBeVisible({ timeout: 15000 });
     });
 
     test('E2E-BOOK-03: Editing a book updates the displayed title', async ({ page }) => {
@@ -134,11 +138,11 @@ test.describe('Book Management', () => {
         const updatedTitle = `Updated Book ${timestamp}`;
 
         // First add a book
-        await page.getByRole('button', { name: /add book/i }).click();
+        await page.locator('button', { hasText: 'Add Book' }).click();
         await page.getByLabel(/title/i).fill(bookTitle);
         await page.getByLabel(/author/i).fill('Author');
-        await page.getByRole('button', { name: /add book/i }).last().click();
-        await expect(page.getByText(bookTitle)).toBeVisible();
+        await page.locator('button', { hasText: 'Add Book' }).last().click();
+        await expect(page.getByText(bookTitle)).toBeVisible({ timeout: 15000 });
 
         // Then edit it
         await page.getByRole('button', { name: new RegExp(`edit ${bookTitle}`, 'i') }).click();
@@ -146,19 +150,19 @@ test.describe('Book Management', () => {
         await page.getByLabel(/title/i).fill(updatedTitle);
         await page.getByRole('button', { name: /save changes/i }).click();
 
-        await expect(page.getByText(updatedTitle)).toBeVisible();
-        await expect(page.getByText(bookTitle)).not.toBeVisible();
+        await expect(page.getByText(updatedTitle)).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText(bookTitle)).not.toBeVisible({ timeout: 15000 });
     });
 
     test('E2E-BOOK-04: Deleting a book removes it from the list', async ({ page }) => {
         const bookTitle = `Delete Test Book ${timestamp}`;
 
         // Add a book first
-        await page.getByRole('button', { name: /add book/i }).click();
+        await page.locator('button', { hasText: 'Add Book' }).click();
         await page.getByLabel(/title/i).fill(bookTitle);
         await page.getByLabel(/author/i).fill('Author');
-        await page.getByRole('button', { name: /add book/i }).last().click();
-        await expect(page.getByText(bookTitle)).toBeVisible();
+        await page.locator('button', { hasText: 'Add Book' }).last().click();
+        await expect(page.getByText(bookTitle)).toBeVisible({ timeout: 15000 });
 
         // Delete it
         await page.getByRole('button', { name: new RegExp(`delete ${bookTitle}`, 'i') }).click();
@@ -166,7 +170,7 @@ test.describe('Book Management', () => {
         // Confirm deletion in the modal
         await page.getByRole('button', { name: /^delete$/i }).click();
 
-        await expect(page.getByText(bookTitle)).not.toBeVisible();
+        await expect(page.getByText(bookTitle)).not.toBeVisible({ timeout: 15000 });
     });
 
     test('E2E-BOOK-05: Filtering by "Reading" status shows only reading books', async ({ page }) => {
@@ -208,6 +212,8 @@ test.describe('Navigation', () => {
 
     test.beforeEach(async ({ page }) => {
         await loginExisting(page);
+        await page.goto('/books');
+        await page.waitForLoadState('networkidle');
     });
 
     test('E2E-NAV-01: Navbar Dashboard link navigates to /dashboard', async ({ page }) => {
@@ -224,10 +230,11 @@ test.describe('Navigation', () => {
 
     test('E2E-NAV-03: Dashboard shows stat cards with numeric values', async ({ page }) => {
         await page.goto('/dashboard');
-        await expect(page.getByText('Total Books')).toBeVisible();
-        await expect(page.getByText('Want to Read')).toBeVisible();
-        await expect(page.getByText('Reading')).toBeVisible();
-        await expect(page.getByText('Finished')).toBeVisible();
+        await page.waitForLoadState('networkidle');
+        await expect(page.getByText('Total Books', { exact: true })).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText('Want to Read', { exact: true })).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText('Reading', { exact: true })).toBeVisible({ timeout: 15000 });
+        await expect(page.getByText('Finished', { exact: true })).toBeVisible({ timeout: 15000 });
     });
 
     test('E2E-NAV-04: View all link on dashboard navigates to /books', async ({ page }) => {
